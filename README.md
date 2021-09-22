@@ -8,3 +8,5 @@
 * babel-plugin-remove-import-export
 * tsc-watch
 * typescript
+* axios
+* uikit
