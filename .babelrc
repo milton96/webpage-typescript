@@ -1,0 +1,17 @@
+{
+    "presets": [
+        "@babel/preset-typescript",
+        "@babel/preset-env"
+    ],
+    "plugins": [
+        [
+            "remove-import-export",
+            {
+                "removeImport": true,
+                "removeExport": true,
+                "removeExportDefault": true,
+                "preseveNamedDeclaration": true
+            }
+        ]
+    ]
+}
