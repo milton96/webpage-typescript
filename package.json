@@ -4,6 +4,8 @@
   "description": "",
   "main": "index.js",
   "scripts": {
+    "dev": "tsc-watch --onSuccess \"babel src --out-dir dist/public/js --extensions \".ts,.tsx\"",
+    "build": "babel src --out-dir dist/public/js --extensions \".ts,.tsx\"",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
