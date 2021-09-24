@@ -69,49 +69,109 @@ var Tabla = /*#__PURE__*/function () {
       this.columnas = dataTabla.tabla.Columnas.sort(function (a, b) {
         return a.Posicion > b.Posicion ? 1 : -1;
       });
-      this.filas = dataTabla.tabla.Filas;
-      this.actualizarTabla();
+      dataTabla.tabla.Filas.map(function (fila) {
+        fila.Celdas = fila.Celdas.sort(function (a, b) {
+          return a.Posicion > b.Posicion ? 1 : -1;
+        });
+      });
+      this.filas = dataTabla.tabla.Filas; // si ya tiene un thead se quita
+
+      var thead = this.tablaHtml.querySelector("thead");
+      if (thead) thead.remove();
+      this.theadHtml = document.createElement("thead");
+      this.tablaHtml.appendChild(this.theadHtml);
+      this.agregarColumnas(); // actualizar filas de la tabla
+
+      this.actualizarFilas();
     }
   }, {
-    key: "actualizarTabla",
-    value: function actualizarTabla() {
-      this.theadHtml = document.createElement("thead");
+    key: "actualizarFilas",
+    value: function actualizarFilas() {
+      var _this$tablaHtml$query;
+
       this.tbodyHtml = document.createElement("tbody");
-      this.tablaHtml.innerHTML = "";
-      this.tablaHtml.appendChild(this.theadHtml);
+      (_this$tablaHtml$query = this.tablaHtml.querySelector("tbody")) === null || _this$tablaHtml$query === void 0 ? void 0 : _this$tablaHtml$query.remove();
       this.tablaHtml.appendChild(this.tbodyHtml);
-      this.agregarColumnas();
       this.agregarFilas();
       this.hacerPaginacion();
     }
   }, {
     key: "agregarColumnas",
     value: function agregarColumnas() {
-      var _this$theadHtml;
+      var _this$theadHtml,
+          _this2 = this;
 
       var tr = (_this$theadHtml = this.theadHtml) === null || _this$theadHtml === void 0 ? void 0 : _this$theadHtml.insertRow();
       this.columnas.forEach(function (col, index) {
-        var th = document.createElement("th");
-        th.innerText = col.Valor;
-        th.addEventListener("click", function (e) {
-          console.log("Posicion: ".concat(col.Posicion, " - Valor: ").concat(col.Valor));
-        });
+        var th = _this2.crearTh(col);
+
         tr === null || tr === void 0 ? void 0 : tr.appendChild(th);
       });
     }
   }, {
     key: "agregarFilas",
     value: function agregarFilas() {
-      console.log(this.filas);
+      var _this3 = this;
+
       this.pagina = this.filas.filter(function (f) {
         return f.Mostrar;
       });
-      console.log(this.pagina);
+      this.pagina.forEach(function (fila) {
+        var _this3$tbodyHtml;
+
+        var row = document.createElement("tr");
+        fila.Celdas.forEach(function (celda, index) {
+          var td = document.createElement("td");
+          td.innerText = celda.Valor;
+          row.appendChild(td);
+        });
+        (_this3$tbodyHtml = _this3.tbodyHtml) === null || _this3$tbodyHtml === void 0 ? void 0 : _this3$tbodyHtml.appendChild(row);
+      });
     }
   }, {
     key: "hacerPaginacion",
     value: function hacerPaginacion() {
       console.log(this.filasPorPagina);
+    }
+  }, {
+    key: "crearTh",
+    value: function crearTh(columna) {
+      var th = document.createElement("th"),
+          span = document.createElement("span");
+      span.innerText = columna.Valor;
+      th.appendChild(span);
+
+      if (columna.Ordenar) {
+        var a = this.crearAicon("arrow-down");
+        a.addEventListener("click", function (e) {
+          e.preventDefault();
+          e.stopPropagation();
+          console.log("Ordenar columna ".concat(columna.Posicion, " - ").concat(columna.Valor));
+        });
+        th.appendChild(a);
+      }
+
+      if (columna.Filtrar) {
+        var _a = this.crearAicon("search");
+
+        _a.addEventListener("click", function (e) {
+          e.preventDefault();
+          e.stopPropagation();
+          console.log("Filtrar columna ".concat(columna.Posicion, " - ").concat(columna.Valor));
+        });
+
+        th.appendChild(_a);
+      }
+
+      return th;
+    }
+  }, {
+    key: "crearAicon",
+    value: function crearAicon(icon) {
+      var a = document.createElement("a");
+      a.href = "#";
+      a.setAttribute("uk-icon", icon);
+      return a;
     }
   }]);
 
