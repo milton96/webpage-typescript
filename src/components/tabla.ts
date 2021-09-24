@@ -80,7 +80,6 @@ export class Tabla {
     private agregarColumnas(): void {
         const tr = this.theadHtml?.insertRow();
         this.columnas.forEach((col, index) => {
-            //console.log(index, col.Posicion, col.Valor);
             let th = document.createElement("th");
             th.innerText = col.Valor;
 
@@ -94,6 +93,8 @@ export class Tabla {
 
     private agregarFilas(): void {
         console.log(this.filas);
+        this.pagina = this.filas.filter(f => f.Mostrar);
+        console.log(this.pagina);
     }
 
     private hacerPaginacion(): void {

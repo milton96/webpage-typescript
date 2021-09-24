@@ -91,7 +91,6 @@ var Tabla = /*#__PURE__*/function () {
 
       var tr = (_this$theadHtml = this.theadHtml) === null || _this$theadHtml === void 0 ? void 0 : _this$theadHtml.insertRow();
       this.columnas.forEach(function (col, index) {
-        //console.log(index, col.Posicion, col.Valor);
         var th = document.createElement("th");
         th.innerText = col.Valor;
         th.addEventListener("click", function (e) {
@@ -104,6 +103,10 @@ var Tabla = /*#__PURE__*/function () {
     key: "agregarFilas",
     value: function agregarFilas() {
       console.log(this.filas);
+      this.pagina = this.filas.filter(function (f) {
+        return f.Mostrar;
+      });
+      console.log(this.pagina);
     }
   }, {
     key: "hacerPaginacion",
