@@ -1,0 +1,8 @@
+html, body {
+    background-color: powderblue;
+    height: 100%;
+}
+
+body, body > .uk-container {
+    min-height: 100%;
+}
