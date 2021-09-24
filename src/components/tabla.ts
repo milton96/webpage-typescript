@@ -1,4 +1,4 @@
-import { ITabla, IColumna, IFila } from './itabla';
+import { ITabla, IColumna, IFila } from '../interfaces/itabla';
 import { hacerPeticion, metodos } from '../index';
 import { AxiosRequestConfig } from 'axios';
 
