@@ -33,12 +33,27 @@ var Tabla = /*#__PURE__*/function () {
 
     _defineProperty(this, "paginaActual", void 0);
 
-    if (typeof idTabla === 'string') this.tablaHtml = document.getElementById(idTabla);else this.tablaHtml = idTabla;
+    _defineProperty(this, "ulPaginacion", void 0);
+
+    _defineProperty(this, "minFila", void 0);
+
+    _defineProperty(this, "maxFila", void 0);
+
+    if (typeof idTabla === 'string') {
+      this.tablaHtml = document.getElementById(idTabla);
+      this.ulPaginacion = document.getElementById("".concat(idTabla, "-paginacion"));
+    } else {
+      this.tablaHtml = idTabla;
+      this.ulPaginacion = document.getElementById("".concat(idTabla.id, "-paginacion"));
+    }
+
     this.filas = [];
     this.columnas = [];
     this.pagina = [];
     this.filasPorPagina = 5;
     this.paginaActual = 1;
+    this.minFila = 0;
+    this.maxFila = 0;
 
     if (this.tablaHtml) {
       if (typeof source === 'string') this.obtenerDatos(source);else this.inicializarTabla(source);
@@ -66,6 +81,7 @@ var Tabla = /*#__PURE__*/function () {
     value: function inicializarTabla(dataTabla) {
       if (!this.tablaHtml) return;
       this.filasPorPagina = dataTabla.tabla.FilasPagina;
+      this.maxFila = this.filasPorPagina;
       this.columnas = dataTabla.tabla.Columnas.sort(function (a, b) {
         return a.Posicion > b.Posicion ? 1 : -1;
       });
@@ -116,6 +132,7 @@ var Tabla = /*#__PURE__*/function () {
       this.pagina = this.filas.filter(function (f) {
         return f.Mostrar;
       });
+      this.pagina = this.pagina.slice(this.minFila, this.maxFila);
       this.pagina.forEach(function (fila) {
         var _this3$tbodyHtml;
 
@@ -131,7 +148,38 @@ var Tabla = /*#__PURE__*/function () {
   }, {
     key: "hacerPaginacion",
     value: function hacerPaginacion() {
-      console.log(this.filasPorPagina);
+      var _this4 = this;
+
+      this.ulPaginacion.innerHTML = "";
+      var numeroPaginas = this.numeroPaginas(); // página anterior
+
+      var aAnterior = this.crearAicon("chevron-left"),
+          liAnterior = document.createElement("li");
+      aAnterior.addEventListener("click", function (e) {
+        e.preventDefault();
+
+        _this4.cambiarPagina(--_this4.paginaActual);
+      });
+      liAnterior.appendChild(aAnterior);
+      this.ulPaginacion.appendChild(liAnterior); // números de página
+
+      for (var i = 0; i < numeroPaginas; i++) {
+        var paginaActual = i + 1;
+        var li = this.crearNumPagina(paginaActual);
+        if (paginaActual == this.paginaActual) li.classList.add("activa");
+        this.ulPaginacion.appendChild(li);
+      } // página siguiente
+
+
+      var aSiguiente = this.crearAicon("chevron-right"),
+          liSiguiente = document.createElement("li");
+      aSiguiente.addEventListener("click", function (e) {
+        e.preventDefault();
+
+        _this4.cambiarPagina(++_this4.paginaActual);
+      });
+      liSiguiente.appendChild(aSiguiente);
+      this.ulPaginacion.appendChild(liSiguiente);
     }
   }, {
     key: "crearTh",
@@ -172,6 +220,45 @@ var Tabla = /*#__PURE__*/function () {
       a.href = "#";
       a.setAttribute("uk-icon", icon);
       return a;
+    }
+  }, {
+    key: "cambiarPagina",
+    value: function cambiarPagina(numeroPagina) {
+      if (numeroPagina < 1) numeroPagina = 1;
+      var numeroPaginas = this.numeroPaginas();
+      if (numeroPagina > numeroPaginas) numeroPagina = numeroPaginas;
+      this.minFila = numeroPagina * this.filasPorPagina - this.filasPorPagina, this.maxFila = numeroPagina * this.filasPorPagina;
+      if (this.maxFila > this.filas.filter(function (f) {
+        return f.Mostrar;
+      }).length) this.maxFila = this.filas.filter(function (f) {
+        return f.Mostrar;
+      }).length;
+      this.paginaActual = numeroPagina;
+      this.actualizarFilas();
+    }
+  }, {
+    key: "numeroPaginas",
+    value: function numeroPaginas() {
+      return Math.ceil(this.filas.filter(function (f) {
+        return f.Mostrar;
+      }).length / this.filasPorPagina);
+    }
+  }, {
+    key: "crearNumPagina",
+    value: function crearNumPagina(numero) {
+      var _this5 = this;
+
+      var li = document.createElement("li"),
+          a = document.createElement("a");
+      a.innerText = "".concat(numero);
+      a.addEventListener("click", function (e) {
+        e.preventDefault();
+        _this5.paginaActual = numero;
+
+        _this5.cambiarPagina(numero);
+      });
+      li.appendChild(a);
+      return li;
     }
   }]);
 
